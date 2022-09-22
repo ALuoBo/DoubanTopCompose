@@ -35,3 +35,18 @@ data class Data(
     val shareImage: String,
     val updatedAt: Long
 )
+ data class Movie(
+     val poster: String,
+     val name:String,
+     val alias: String,
+     val description: String
+ )
+
+fun MovieItem.asEntry():Movie{
+    return Movie(
+        poster = this.data[0].poster,
+        name = this.data[0].name,
+        alias = this.alias,
+        description = this.data[0].description
+    )
+}

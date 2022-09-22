@@ -15,14 +15,10 @@ interface Api {
      */
     @GET("api/v1/top")
     suspend fun getTop(
-        @Query("type")
-        type: String,
-        @Query("skip")
-        skip: Int,
-        @Query("limit")
-        limit: Int,
-        @Query("lang")
-        lang: String = "Cn"
+        @Query("type") type: String,
+        @Query("skip") skip: Int,
+        @Query("limit") limit: Int,
+        @Query("lang") lang: String = "Cn"
     ): List<MovieItem>
 }
 

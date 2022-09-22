@@ -1,5 +1,6 @@
 package com.sunbio.composemvi.ui.movie
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,9 +10,16 @@ import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
@@ -20,15 +28,13 @@ import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
-import com.sunbio.composemvi.api.MovieItem
+import com.sunbio.composemvi.api.Movie
 
 @Composable
 fun MovieScreen(
     viewModel: MovieViewModel = viewModel()
 ) {
-
     viewModel.fetchLastedMovies()
-
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -38,19 +44,12 @@ fun MovieScreen(
             }
         }
     }
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreMovieScreen() {
-    MovieScreen()
 }
 
 @Composable
-fun MovieCard(movie: MovieItem) {
+fun MovieCard(movie: Movie) {
     var backgroundColor by remember {
-        mutableStateOf(Color(0xFFBB86FC))
+        mutableStateOf(Color.Black)
     }
     Card(
         elevation = 6.dp,
@@ -58,43 +57,112 @@ fun MovieCard(movie: MovieItem) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 8.dp)
-
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color = backgroundColor)
+                .background(color = backgroundColor),
         ) {
             AsyncImage(modifier = Modifier
-                .height(200.dp)
-                .padding(8.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(movie.data[0].poster)
-                    .crossfade(true)
-                    .allowHardware(false)
-                    .build(),
+                .height(180.dp)
+                .width(120.dp)
+                .padding(12.dp),
+                model = ImageRequest.Builder(LocalContext.current).data(movie.poster)
+                    .crossfade(true).allowHardware(false).build(),
                 contentDescription = null,
+                contentScale = ContentScale.FillHeight,
                 onState = {
                     if (it is AsyncImagePainter.State.Success) {
                         backgroundColor = Color(
-                            Palette.from(it.result.drawable.toBitmap())
-                                .generate()
+                            Palette.from(it.result.drawable.toBitmap()).generate()
                                 .getMutedColor(0xFFFFFF)
                         )
                     }
                 })
-            Text(
-                modifier = Modifier.padding(8.dp),
-                fontSize = 18.sp,
-                text = movie.data[0].name
-            )
+
+            Row(
+                modifier = Modifier.fillMaxSize()
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(0.7f)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 16.dp),
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        text = movie.name
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(top = 8.dp),
+                        color = Color.White,
+                        text = movie.alias,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 11.sp,
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(top = 8.dp),
+                        color = Color.White,
+                        maxLines = 5,
+                        overflow = TextOverflow.Ellipsis,
+                        text = movie.description,
+                        fontSize = 11.sp,
+                    )
+                }
+
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .weight(0.3f)
+                        .padding(start = 6.dp)
+                ) {
+                    drawIntoCanvas {
+                        drawLine(
+                            color = Color.White,
+                            start = Offset(0f, 0f),
+                            end = Offset(0f, size.height),
+                            strokeWidth = 2f,
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 0f)
+                        )
+                        drawCircle(
+                            color = Color.Blue,
+                            center = Offset(x = size.width / 2, y = size.height / 2),
+                            radius = size.minDimension / 4
+                        )
+                    }
+
+                }
+            }
+
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    widthDp = 400, heightDp = 200, showBackground = true
+)
 @Composable
-fun PreMovieCard() {
-    //MovieCard()
+fun PreMovieCard(
+    @PreviewParameter(MoviePreviewCardParamProvider::class) movie: Movie
+) {
+    MovieCard(movie)
 }
+
+class MoviePreviewCardParamProvider : PreviewParameterProvider<Movie> {
+    override val values = sequenceOf(
+        Movie(
+            poster = "https://wmdb.querydata.org/movie/poster/1603701754760-c50d8a.jpg",
+            name = "肖生克的救赎",
+            alias = "月黑高飞(港) / 刺激1995(台) / 地狱诺言 / 铁窗岁月 / 消香克的救赎",
+            description = "20世纪40年代末，小有成就的青年银行家安迪（蒂姆·罗宾斯 Tim Robbins 饰）因涉嫌杀害妻子及她的情人而锒铛入狱。在这座名为鲨堡的监狱内，希望似乎虚无缥缈，终身监禁的惩罚无疑注定了安迪接下来..."
+        )
+    )
+}
+
 
