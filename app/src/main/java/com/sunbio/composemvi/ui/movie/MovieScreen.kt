@@ -172,6 +172,8 @@ fun MovieCard(movie: Movie) {
     }
 }
 
+
+
 @Preview(
     widthDp = 400, heightDp = 200, showBackground = true
 )
