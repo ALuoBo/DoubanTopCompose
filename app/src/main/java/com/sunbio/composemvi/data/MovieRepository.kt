@@ -1,8 +1,20 @@
 package com.sunbio.composemvi.data
 
-import com.sunbio.composemvi.api.MovieItem
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.sunbio.composemvi.api.Movie
+import kotlinx.coroutines.flow.Flow
 
-class MovieRepository(private val movieDataSource: MovieRemoteDataSource) {
-    suspend fun fetchLastedMovie(type: String, skip: Int, limit: Int): List<MovieItem> =
-        movieDataSource.fetchLatestMovies(type, skip, limit)
+object MovieRepository {
+    fun getPagingData(): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 15,
+                initialLoadSize = 15,
+            ),
+            pagingSourceFactory = { MovieDataSource() }
+        ).flow
+    }
+
 }

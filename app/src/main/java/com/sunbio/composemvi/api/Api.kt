@@ -13,9 +13,8 @@ interface Api {
     /**
      * https://api.wmdb.tv/api/v1/top?type=Imdb&skip=0&limit=50&lang=Cn
      */
-    @GET("api/v1/top")
+    @GET("api/v1/top?type=Douban")
     suspend fun getTop(
-        @Query("type") type: String,
         @Query("skip") skip: Int,
         @Query("limit") limit: Int,
         @Query("lang") lang: String = "Cn"

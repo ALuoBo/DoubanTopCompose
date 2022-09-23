@@ -9,7 +9,7 @@ data class MovieItem(
     val doubanRating: String,
     val doubanVotes: Int,
     val duration: Int,
-    val id: String,
+    val id: String?,
     val imdbId: String,
     val imdbRating: String,
     val imdbVotes: Int,
@@ -36,10 +36,11 @@ data class Data(
     val updatedAt: Long
 )
  data class Movie(
-     val poster: String,
-     val name:String,
-     val alias: String,
-     val description: String
+     val poster: String?,
+     val name:String?,
+     val alias: String?,
+     val description: String?,
+     val doubanRating:String?
  )
 
 fun MovieItem.asEntry():Movie{
@@ -47,6 +48,8 @@ fun MovieItem.asEntry():Movie{
         poster = this.data[0].poster,
         name = this.data[0].name,
         alias = this.alias,
-        description = this.data[0].description
+        description = this.data[0].description,
+        doubanRating = this.doubanRating
+
     )
 }
