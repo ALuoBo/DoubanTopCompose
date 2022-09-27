@@ -8,10 +8,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -45,10 +47,9 @@ fun MovieScreen(
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
-          items(data){
-              item->
-              MovieCard(movie = item!!)
-          }
+        items(data) { item ->
+            MovieCard(movie = item!!)
+        }
     }
 }
 
@@ -62,6 +63,7 @@ fun MovieCard(movie: Movie) {
         shape = RoundedCornerShape(15.dp),
         modifier = Modifier
             .fillMaxWidth()
+            .height(200.dp)
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         Row(
@@ -99,13 +101,13 @@ fun MovieCard(movie: Movie) {
                         modifier = Modifier.padding(top = 16.dp),
                         color = Color.White,
                         fontSize = 15.sp,
-                        text = movie.name?:""
+                        text = movie.name ?: ""
                     )
 
                     Text(
                         modifier = Modifier.padding(top = 8.dp),
                         color = Color.White,
-                        text = movie.alias?:"",
+                        text = movie.alias ?: "",
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         fontSize = 11.sp,
@@ -116,7 +118,7 @@ fun MovieCard(movie: Movie) {
                         color = Color.White,
                         maxLines = 5,
                         overflow = TextOverflow.Ellipsis,
-                        text = movie.description?:"",
+                        text = movie.description ?: "",
                         fontSize = 11.sp,
                     )
                 }
@@ -135,6 +137,7 @@ fun MovieCard(movie: Movie) {
                         pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 0f),
                     )
                 }
+
                 Column(
                     modifier = Modifier
                         .weight(0.25f)
@@ -161,7 +164,7 @@ fun MovieCard(movie: Movie) {
                     }
 
                     Text(
-                        text = movie.doubanRating?:"",
+                        text = movie.doubanRating ?: "",
                         color = Color.White,
                         fontSize = 10.sp
                     )
@@ -171,7 +174,6 @@ fun MovieCard(movie: Movie) {
         }
     }
 }
-
 
 
 @Preview(
