@@ -3,6 +3,7 @@ package com.sunbio.composemvi.ui.movie
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import androidx.palette.graphics.Palette
@@ -37,35 +39,41 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
 import com.sunbio.composemvi.R
+import com.sunbio.composemvi.RouterIntent
 import com.sunbio.composemvi.api.Movie
 
 @Composable
 fun MovieScreen(
-    viewModel: MovieViewModel = viewModel()
+    navController: NavController, viewModel: MovieViewModel = viewModel()
 ) {
     val data = viewModel.fetchLastedMovies().collectAsLazyPagingItems()
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
         items(data) { item ->
-            MovieCard(movie = item!!)
+            MovieCard(movie = item!!) {
+                navController.navigate(RouterIntent.MOVIE_DETAIL)
+            }
         }
     }
 }
 
 @Composable
-fun MovieCard(movie: Movie) {
+fun MovieCard(
+    movie: Movie, onClick: (() -> Unit)? = null
+) {
     var backgroundColor by remember {
         mutableStateOf(Color.Black)
     }
-    Card(
-        elevation = 6.dp,
+    Card(elevation = 6.dp,
         shape = RoundedCornerShape(15.dp),
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
             .padding(horizontal = 12.dp, vertical = 8.dp)
-    ) {
+            .clickable {
+                onClick?.invoke()
+            }) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -149,14 +157,12 @@ fun MovieCard(movie: Movie) {
                             .align(Alignment.CenterHorizontally)
                     ) {
                         Image(
-                            modifier = Modifier
-                                .size(15.dp),
+                            modifier = Modifier.size(15.dp),
                             painter = painterResource(id = R.drawable.logo_douban),
                             contentDescription = null
                         )
                         Text(
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp),
+                            modifier = Modifier.padding(horizontal = 4.dp),
                             color = Color.White,
                             text = "豆瓣",
                             fontSize = 10.sp
@@ -164,9 +170,7 @@ fun MovieCard(movie: Movie) {
                     }
 
                     Text(
-                        text = movie.doubanRating ?: "",
-                        color = Color.White,
-                        fontSize = 10.sp
+                        text = movie.doubanRating ?: "", color = Color.White, fontSize = 10.sp
                     )
                 }
             }
@@ -174,7 +178,6 @@ fun MovieCard(movie: Movie) {
         }
     }
 }
-
 
 @Preview(
     widthDp = 400, heightDp = 200, showBackground = true

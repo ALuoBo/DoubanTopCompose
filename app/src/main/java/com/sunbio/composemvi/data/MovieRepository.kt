@@ -7,6 +7,7 @@ import com.sunbio.composemvi.api.Movie
 import kotlinx.coroutines.flow.Flow
 
 object MovieRepository {
+
     fun getPagingData(): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(
